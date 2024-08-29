@@ -84,6 +84,23 @@ if (pfs_BUILD_TESTS AND pfs_BUILD_COVERAGE)
 endif ()
 
 # ------------------------------------------------------------------------
+# Generate a python module
+# ------------------------------------------------------------------------
+
+set(PYBIND11_PYTHON_VERSION 3.6)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -fPIC")
+
+set(pybind11_DIR ${CMAKE_SOURCE_DIR}/../venv/lib/python3.10/site-packages/pybind11/share/cmake/pybind11)
+find_package(pybind11 REQUIRED)
+
+aux_source_directory (${pfs_ROOT_SOURCE_DIR}/pybind pfs_PYBIND_SOURCES)
+pybind11_add_module(pypfs ${pfs_PYBIND_SOURCES})
+
+target_compile_definitions(pypfs PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
+target_include_directories(pypfs PRIVATE ${PYBIND11_INCLUDE_DIRS})
+target_link_libraries(pypfs PRIVATE pfs)
+
+# ------------------------------------------------------------------------
 # Generate a CMake package configuration file to support find_package()
 # ------------------------------------------------------------------------
 
