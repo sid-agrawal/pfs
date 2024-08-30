@@ -28,8 +28,16 @@ PYBIND11_MODULE(pypfs, m) {
     .def_readwrite("pathname", &pfs::mem_region::pathname)
     ;
 
+    // This class has a lot more fields, if we need them then we can add more def_readwrite
+    py::class_<pfs::task_status>(m, "task_status")
+    .def_readwrite("ns_pid", &pfs::task_status::ns_pid)
+    ;
+
     py::class_<pfs::task>(m, "task")
     .def("get_maps", &pfs::task::get_maps)
+    .def("get_status", &pfs::task::get_status)
+    // We need a special cast for get_ns because it is an overloaded function
+    .def("get_ns", static_cast<std::unordered_map<std::string, ino_t> (pfs::task::*)(void) const>(&pfs::task::get_ns))
     ;
 
     py::class_<pfs::procfs>(m, "procfs")
