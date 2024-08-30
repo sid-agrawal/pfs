@@ -28,6 +28,15 @@ PYBIND11_MODULE(pypfs, m) {
     .def_readwrite("pathname", &pfs::mem_region::pathname)
     ;
 
+    py::class_<pfs::mount>(m, "mount")
+    .def_readwrite("id", &pfs::mount::id)
+    .def_readwrite("parent_id", &pfs::mount::parent_id)
+    .def_readwrite("device", &pfs::mount::device)
+    .def_readwrite("root", &pfs::mount::root)
+    .def_readwrite("point", &pfs::mount::point)
+    .def_readwrite("source", &pfs::mount::source)
+    ;
+
     // This class has a lot more fields, if we need them then we can add more def_readwrite
     py::class_<pfs::task_status>(m, "task_status")
     .def_readwrite("ns_pid", &pfs::task_status::ns_pid)
@@ -36,6 +45,7 @@ PYBIND11_MODULE(pypfs, m) {
     py::class_<pfs::task>(m, "task")
     .def("get_maps", &pfs::task::get_maps)
     .def("get_status", &pfs::task::get_status)
+    .def("get_mountinfo", &pfs::task::get_mountinfo)
     // We need a special cast for get_ns because it is an overloaded function
     .def("get_ns", static_cast<std::unordered_map<std::string, ino_t> (pfs::task::*)(void) const>(&pfs::task::get_ns))
     ;
