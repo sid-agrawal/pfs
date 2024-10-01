@@ -26,6 +26,7 @@ option (pfs_BUILD_COVERAGE "Enable coverage instrumentation" OFF)
 option (pfs_BUILD_ASAN "Enable address sanitizer" OFF)
 option (pfs_BUILD_SAMPLES "Build samples" ON)
 option (pfs_BUILD_TESTS "Build tests" ON)
+option (pfs_BUILD_OSMOSIS_EXAMPLES "Build examples for OSmosis" ON)
 
 # ------------------------------------------------------------------------
 # Actual configuration
@@ -67,6 +68,15 @@ if (pfs_BUILD_SAMPLES)
     add_executable (sample ${pfs_SAMPLE_SOURCES})
     target_compile_features(sample PUBLIC cxx_std_11)
     target_link_libraries (sample PRIVATE pfs)
+endif()
+
+if (pfs_BUILD_OSMOSIS_EXAMPLES)
+    aux_source_directory (osmosis_examples pfs_OSMOSIS_EXAMPLE_SOURCES)
+    add_executable (hello "./osmosis_examples/hello.c")
+    add_executable (hello_2 "./osmosis_examples/hello_2.c")
+    add_executable (hello_malloc "./osmosis_examples/hello_malloc.c")
+    add_executable (hello_mmap "./osmosis_examples/hello_mmap.c")
+    add_executable (hello_print_pid "./osmosis_examples/hello_print_pid.c")
 endif()
 
 if (pfs_BUILD_TESTS)
