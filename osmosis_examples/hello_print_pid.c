@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-result"
+
 int main(int argc, char **argv)
 {
     if(argc != 2) {
@@ -11,9 +15,7 @@ int main(int argc, char **argv)
     int fd = atoi(argv[1]); // Get the FD to print to
     
     char buffer[64];
-    int sz = snprintf(buffer, sizeof(buffer), "Child PID in child ns: %d\n", getpid());
-    assert (sz > 0);
-
+    snprintf(buffer, sizeof(buffer), "Child PID in child ns: %d\n", getpid());
     write(fd, buffer, sizeof(buffer));
 
     // Idle until killed
@@ -24,3 +26,4 @@ int main(int argc, char **argv)
 
     return 0;
 }
+#pragma GCC diagnostic pop

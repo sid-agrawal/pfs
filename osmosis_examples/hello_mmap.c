@@ -15,9 +15,7 @@ int main() {
    assert(shm_fd > 0);
 
    // map it
-   int error = ftruncate(shm_fd, MMAP_SIZE);
-   assert (error == 0);
-
+   __attribute__((unused)) int fd = ftruncate(shm_fd, MMAP_SIZE); 
    void *mem = mmap(NULL, MMAP_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, shm_fd, 0);
    assert(mem != MAP_FAILED);
 
