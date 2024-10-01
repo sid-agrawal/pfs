@@ -32,7 +32,7 @@ option (pfs_BUILD_OSMOSIS_EXAMPLES "Build examples for OSmosis" ON)
 # Actual configuration
 # ------------------------------------------------------------------------
 
-add_compile_options (-Wall -Wextra -pedantic -Werror)
+add_compile_options (-Wall -Wextra -pedantic -Werror -Werror=unused-result)
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)

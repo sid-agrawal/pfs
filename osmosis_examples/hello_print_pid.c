@@ -5,11 +5,15 @@
 
 int main(int argc, char **argv)
 {
-    assert(argc == 2);
+    if(argc != 2) {
+        return 1;
+    }
     int fd = atoi(argv[1]); // Get the FD to print to
     
     char buffer[64];
-    snprintf(buffer, sizeof(buffer), "Child PID in child ns: %d\n", getpid());
+    int sz = snprintf(buffer, sizeof(buffer), "Child PID in child ns: %d\n", getpid());
+    assert (sz > 0);
+
     write(fd, buffer, sizeof(buffer));
 
     // Idle until killed
