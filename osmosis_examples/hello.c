@@ -2,7 +2,7 @@
 #include <unistd.h>
 
 int main() {
-   printf("Hello?\n");
+   printf("Hello? Sleeping forever...\n");
 
    // Idle until killed
    while(1) {
