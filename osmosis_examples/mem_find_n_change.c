@@ -7,6 +7,9 @@
 #include <fcntl.h>
 #include <stdint.h>
 
+ #pragma GCC diagnostic ignored "-Wunused-result"
+ #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+
 // ORIG_BUFFER will be placed in memory and will then be changed to NEW_BUFFER
 // They must be the same length
 #define ORIG_BUFFER "Hello, World!"
