@@ -44,7 +44,7 @@ int main(void) {
    int mem_fd = open_memory();
    seek_memory(mem_fd, offset);
 
-   printf("Buffer: %s\n", buffer);
+   printf("Buffer: %s\n", (char *) buffer);
    puts("Changing buffer through /dev/mem...");
 
    // Change the contents of the buffer by writing into /dev/mem
@@ -54,7 +54,7 @@ int main(void) {
       fprintf(stderr, "Write failed: %s\n", strerror(errno));
    }
 
-   printf("Buffer: %s\n", buffer);
+   printf("Buffer: %s\n",(char *)  buffer);
 
    // Clean up
    free(buffer);
@@ -82,7 +82,7 @@ void* create_buffer(void) {
    }
 
    // Add some data to the memory
-   strncpy(buffer, ORIG_BUFFER, strlen(ORIG_BUFFER));
+   strncpy(buffer, ORIG_BUFFER, strlen(ORIG_BUFFER) +1);
 
    return buffer;
 }
@@ -122,7 +122,7 @@ int open_memory(void) {
 }
 
 void seek_memory(int fd, unsigned long offset) {
-   unsigned pos = lseek(fd, offset, SEEK_SET);
+   off_t pos = lseek(fd, offset, SEEK_SET);
 
    if(pos == -1) {
       fprintf(stderr, "Failed to seek /dev/mem: %s\n", strerror(errno));

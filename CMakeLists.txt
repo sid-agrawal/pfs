@@ -77,6 +77,7 @@ if (pfs_BUILD_OSMOSIS_EXAMPLES)
     add_executable (hello_malloc "./osmosis_examples/hello_malloc.c")
     add_executable (hello_mmap "./osmosis_examples/hello_mmap.c")
     add_executable (hello_print_pid "./osmosis_examples/hello_print_pid.c")
+    add_executable (mem_find_n_change "./osmosis_examples/mem_find_n_change.c")
 endif()
 
 if (pfs_BUILD_TESTS)
