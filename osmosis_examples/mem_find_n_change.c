@@ -27,19 +27,25 @@ unsigned long get_page_frame_number_of_address(void *addr);
 int open_memory(void);
 void seek_memory(int fd, unsigned long offset);
 
+
+unsigned long get_pa(void * va) {
+
+   unsigned long page_frame_number = get_page_frame_number_of_address(va);
+   printf("Page frame: 0x%lx\n", page_frame_number);
+
+   // Find the difference from the buffer to the page boundary
+   unsigned long distance_from_page_boundary = (unsigned long)va % getpagesize();
+
+   // Determine how far to seek into memory to find the buffer
+   unsigned long offset = (page_frame_number << PAGE_SHIFT) + distance_from_page_boundary;
+   return offset;
+}
 int main(void) {
    // Create a buffer with some data in it
    void *buffer = create_buffer();
 
-   // Get the page frame the buffer is on
-   unsigned int page_frame_number = get_page_frame_number_of_address(buffer);
-   printf("Page frame: 0x%x\n", page_frame_number);
-
-   // Find the difference from the buffer to the page boundary
-   unsigned int distance_from_page_boundary = (unsigned long)buffer % getpagesize();
-
-   // Determine how far to seek into memory to find the buffer
-   uint64_t offset = (page_frame_number << PAGE_SHIFT) + distance_from_page_boundary;
+   // Get pa
+   unsigned long offset = get_pa(buffer);
 
    // Open /dev/mem, seek the calculated offset, and
    // map it into memory so we can manipulate it
@@ -59,8 +65,8 @@ int main(void) {
 
    fsync(mem_fd);
    while (1) {
-           sleep (1);
-           printf("Buffer: %s\n",(char *)  buffer);
+           printf("Buffer[0x%p  ::  0x%lx] %s\n",buffer, get_pa(buffer), (char *)  buffer);
+           sleep (4);
    }
 
    // Clean up
