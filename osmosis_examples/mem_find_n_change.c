@@ -48,7 +48,7 @@ int main(void) {
    seek_memory(mem_fd, offset);
 
    printf("Buffer: %s\n", (char *) buffer);
-   puts("Changing buffer through /dev/mem...");
+   printf("Changing buffer through /dev/mem... at offset/PA: 0x%lx\n",offset);
 
    // Change the contents of the buffer by writing into /dev/mem
    // Note that since the strings are the same length, there's no purpose in
@@ -57,7 +57,11 @@ int main(void) {
       fprintf(stderr, "Write failed: %s\n", strerror(errno));
    }
 
-   printf("Buffer: %s\n",(char *)  buffer);
+   fsync(mem_fd);
+   while (1) {
+           sleep (1);
+           printf("Buffer: %s\n",(char *)  buffer);
+   }
 
    // Clean up
    free(buffer);
@@ -93,6 +97,9 @@ void* create_buffer(void) {
 unsigned long get_page_frame_number_of_address(void *addr) {
    // Open the pagemap file for the current process
    FILE *pagemap = fopen("/proc/self/pagemap", "rb");
+   if (pagemap == NULL) {
+      fprintf(stderr, "fopen to pagemap failed: %s\n", strerror(errno));
+   }
 
    // Seek to the page that the buffer is on
    unsigned long offset = (unsigned long)addr / getpagesize() * PAGEMAP_LENGTH;
@@ -103,7 +110,10 @@ unsigned long get_page_frame_number_of_address(void *addr) {
 
    // The page frame number is in bits 0-54 so read the first 7 bytes and clear the 55th bit
    unsigned long page_frame_number = 0;
-   fread(&page_frame_number, 1, PAGEMAP_LENGTH-1, pagemap);
+   int ret = fread(&page_frame_number, 1, PAGEMAP_LENGTH-1, pagemap);
+   if (ret == -1) {
+      fprintf(stderr, "fread to pagemap failed: %s\n", strerror(errno));
+   }
 
    page_frame_number &= 0x7FFFFFFFFFFFFF;
 
@@ -115,7 +125,6 @@ unsigned long get_page_frame_number_of_address(void *addr) {
 int open_memory(void) {
    // Open the memory (must be root for this)
    int fd = open("/dev/mem", O_RDWR);
-
    if(fd == -1) {
       fprintf(stderr, "Error opening /dev/mem: %s\n", strerror(errno));
       exit(1);
