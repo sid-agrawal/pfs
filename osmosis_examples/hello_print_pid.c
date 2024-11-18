@@ -18,6 +18,8 @@ int main(int argc, char **argv)
     snprintf(buffer, sizeof(buffer), "Child PID in child ns: %d\n", getpid());
     write(fd, buffer, sizeof(buffer));
 
+    snprintf(buffer, sizeof(buffer), "Child P-PID in child ns: %d\n", getppid());
+    write(fd, buffer, sizeof(buffer));
     // Idle until killed
     while (1)
     {
