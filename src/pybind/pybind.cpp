@@ -34,7 +34,11 @@ PYBIND11_MODULE(pypfs, m) {
     .def_readwrite("device", &pfs::mount::device)
     .def_readwrite("root", &pfs::mount::root)
     .def_readwrite("point", &pfs::mount::point)
+    .def_readwrite("options", &pfs::mount::options)
+    .def_readwrite("optional", &pfs::mount::optional)
+    .def_readwrite("filesystem_type", &pfs::mount::filesystem_type)
     .def_readwrite("source", &pfs::mount::source)
+    .def_readwrite("super_options", &pfs::mount::super_options)
     ;
 
     // This class has a lot more fields, if we need them then we can add more def_readwrite
