@@ -13,6 +13,11 @@
 #include <termios.h>
 #include <sys/types.h>
 
+#define FATAL do { fprintf(stderr, "Error at line %d, file %s (%d) [%s]\n", \
+                __LINE__, __FILE__, errno, strerror(errno)); exit(1); } while(0)
+
+#define MAP_SIZE 4096UL
+#define MAP_MASK (MAP_SIZE - 1)
 
 // App
 void *generator(void *arg) {
@@ -50,11 +55,24 @@ void *generator(void *arg) {
 }
 
 // Consumer
-#define KVS_VM_SHARED_PAGE_HOST_PA 0x5f600000
+// #define KVS_VM_SHARED_PAGE_HOST_PA 0x5f600000
+#define KVS_VM_SHARED_PAGE_HOST_PA 0x100000000
 
-int main() {
-    pthread_t thread1, thread2;
+int main(int argc, char **argv) {
+    void *map_base, *virt_addr;
     shared_buffer_t shared_buffer;
+    int fd;
+    off_t target;
+
+    if (argc < 2)
+    {
+        fprintf(
+            stderr,
+            "\nUsage:\t%s { Buffer PA }\n",
+            argv[0]);
+        exit(1);
+    }
+    target = strtoul(argv[1], 0, 0);
 
     atomic_init(&shared_buffer.message_ready, 0);
     atomic_init(&shared_buffer.result_ready, 0);

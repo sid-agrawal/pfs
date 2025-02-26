@@ -37,3 +37,17 @@ void set(int key, int value) {
         printf("Key-Value store is full\n");
     }
 }
+
+typedef enum {
+    GET,
+    SET
+} message_type_t;
+
+typedef struct {
+    message_type_t cmd;
+    int key;
+    int value;
+    atomic_int message_ready;
+    atomic_int result_ready;
+    int result;
+} shared_buffer_t;
