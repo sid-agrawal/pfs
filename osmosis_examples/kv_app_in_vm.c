@@ -47,7 +47,7 @@ void *generator(void *arg) {
             // Busy-wait
         }
         if (shared_buffer->cmd == SET) {
-            printf("SET: Success\n");
+            printf("SET: Success with key %d \n", shared_buffer->key);
         } else {
             if (shared_buffer->result != -1 ) {
                 printf("GET: Success. Value : %d\n", shared_buffer->result);
@@ -58,7 +58,7 @@ void *generator(void *arg) {
         atomic_store_int(&shared_buffer->result_ready, 0);
 
         // Sleep for a random time between 1 and 2 seconds
-        sleep(1 + rand() % 2);
+        // sleep(1 + rand() % 2);
     }
 
     return NULL;
