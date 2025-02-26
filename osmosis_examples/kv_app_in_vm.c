@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdatomic.h>
 #include <unistd.h>
 #include <time.h>
 #include "kv_inmemory.h"
@@ -19,9 +18,20 @@
 #define MAP_SIZE 4096UL
 #define MAP_MASK (MAP_SIZE - 1)
 
+void atomic_store_int(int *obj, int val) {
+    __atomic_store_n(obj, val, __ATOMIC_SEQ_CST);
+}
+
+int atomic_load_int(int *obj) {
+    return __atomic_load_n(obj, __ATOMIC_SEQ_CST);
+}
+
+
 // App
 void *generator(void *arg) {
     shared_buffer_t *shared_buffer = (shared_buffer_t *)arg;
+    atomic_store_int(&shared_buffer->message_ready, 0);
+    atomic_store_int(&shared_buffer->result_ready, 0);
 
     while (1) {
         shared_buffer->cmd = rand() % 2 == 0 ? GET : SET;
@@ -31,9 +41,9 @@ void *generator(void *arg) {
         } else {
             shared_buffer->key = rand() %10;
         }
-        atomic_store(&shared_buffer->message_ready, 1);
+        atomic_store_int(&shared_buffer->message_ready, 1);
 
-        while (!atomic_load(&shared_buffer->result_ready)) {
+        while (!atomic_load_int(&shared_buffer->result_ready)) {
             // Busy-wait
         }
         if (shared_buffer->cmd == SET) {
@@ -45,7 +55,7 @@ void *generator(void *arg) {
                 printf("GET: Error : %d\n", shared_buffer->result);
             }
         }
-        atomic_store(&shared_buffer->result_ready, 0);
+        atomic_store_int(&shared_buffer->result_ready, 0);
 
         // Sleep for a random time between 1 and 2 seconds
         sleep(1 + rand() % 2);
@@ -60,7 +70,6 @@ void *generator(void *arg) {
 
 int main(int argc, char **argv) {
     void *map_base, *virt_addr;
-    shared_buffer_t shared_buffer;
     int fd;
     off_t target;
 
@@ -74,8 +83,6 @@ int main(int argc, char **argv) {
     }
     target = strtoul(argv[1], 0, 0);
 
-    atomic_init(&shared_buffer.message_ready, 0);
-    atomic_init(&shared_buffer.result_ready, 0);
 
     
     /* Map Dev Mem at  0x5f600000 */

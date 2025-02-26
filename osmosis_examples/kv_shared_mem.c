@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
-#include <stdatomic.h>
 #include <unistd.h>
 #include <time.h>
 #include "kv_inmemory.h"
@@ -22,6 +21,13 @@
 // } shared_buffer_t;
 
 
+void atomic_store_int(int *obj, int val) {
+    __atomic_store_n(obj, val, __ATOMIC_SEQ_CST);
+}
+
+int atomic_load_int(int *obj) {
+    return __atomic_load_n(obj, __ATOMIC_SEQ_CST);
+}
 // App
 void *thread1_func(void *arg) {
     shared_buffer_t *shared_buffer = (shared_buffer_t *)arg;
@@ -34,9 +40,9 @@ void *thread1_func(void *arg) {
         } else {
             shared_buffer->key = rand() %10;
         }
-        atomic_store(&shared_buffer->message_ready, 1);
+        atomic_store_int(&shared_buffer->message_ready, 1);
 
-        while (!atomic_load(&shared_buffer->result_ready)) {
+        while (!atomic_load_int(&shared_buffer->result_ready)) {
             // Busy-wait
         }
         if (shared_buffer->cmd == SET) {
@@ -48,7 +54,7 @@ void *thread1_func(void *arg) {
                 printf("GET: Error : %d\n", shared_buffer->result);
             }
         }
-        atomic_store(&shared_buffer->result_ready, 0);
+        atomic_store_int(&shared_buffer->result_ready, 0);
 
         // Sleep for a random time between 1 and 2 seconds
         sleep(1 + rand() % 2);
@@ -62,7 +68,7 @@ void *thread2_func(void *arg) {
     shared_buffer_t *shared_buffer = (shared_buffer_t *)arg;
 
     while (1) {
-        while (!atomic_load(&shared_buffer->message_ready)) {
+        while (!atomic_load_int(&shared_buffer->message_ready)) {
             // Busy-wait
         }
         char key_str[20];
@@ -77,7 +83,7 @@ void *thread2_func(void *arg) {
         // printf("Thread 2 received message: %s %s %s\n", 
         //     shared_buffer->cmd == GET ? "GET" : "SET",
         //     key_str, value_str);
-        atomic_store(&shared_buffer->message_ready, 0);
+        atomic_store_int(&shared_buffer->message_ready, 0);
 
         if (shared_buffer->cmd == SET) {
             set(shared_buffer->key, shared_buffer->value);
@@ -86,7 +92,7 @@ void *thread2_func(void *arg) {
             shared_buffer->result = get(shared_buffer->key);
         }
 
-        atomic_store(&shared_buffer->result_ready, 1);
+        atomic_store_int(&shared_buffer->result_ready, 1);
 
         // Sleep for a random time between 1 and 2 seconds
         sleep(1 + rand() % 2);
@@ -99,8 +105,8 @@ int main() {
     pthread_t thread1, thread2;
     shared_buffer_t shared_buffer;
 
-    atomic_init(&shared_buffer.message_ready, 0);
-    atomic_init(&shared_buffer.result_ready, 0);
+    atomic_store_int(&shared_buffer.message_ready, 0);
+    atomic_store_int(&shared_buffer.result_ready, 0);
 
     srand(time(NULL)); // Seed the random number generator
 

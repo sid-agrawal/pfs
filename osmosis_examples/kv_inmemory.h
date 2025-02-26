@@ -47,7 +47,7 @@ typedef struct {
     message_type_t cmd;
     int key;
     int value;
-    atomic_int message_ready;
-    atomic_int result_ready;
+    int message_ready;
+    int result_ready;
     int result;
 } shared_buffer_t;
