@@ -21,6 +21,8 @@ typedef struct {
     int result;
 } shared_buffer_t;
 
+
+// App
 void *thread1_func(void *arg) {
     shared_buffer_t *shared_buffer = (shared_buffer_t *)arg;
 
@@ -55,6 +57,7 @@ void *thread1_func(void *arg) {
     return NULL;
 }
 
+// Server
 void *thread2_func(void *arg) {
     shared_buffer_t *shared_buffer = (shared_buffer_t *)arg;
 
