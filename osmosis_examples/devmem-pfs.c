@@ -99,8 +99,15 @@ int main(int argc, char **argv) {
                         fprintf(stderr, "Illegal data type '%c'.\n", access_type);
                         exit(2);
         }
-        printf("Value at address 0x%lx (%p): 0x%lx\n", target, virt_addr, read_result); 
-        fflush(stdout);
+#ifdef TESTING
+        while (1)
+        {
+            printf("Value at address 0x%lx (%p): 0x%lx\n", target, virt_addr,
+                   read_result);
+            fflush(stdout);
+            sleep(2);
+        }
+#endif
 
         if(argc > 3) {
                 writeval = strtoul(argv[3], 0, 0);
