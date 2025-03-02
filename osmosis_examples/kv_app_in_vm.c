@@ -63,25 +63,34 @@ void *generator(void *arg) {
 
     return NULL;
 }
-
-// Consumer
-// #define KVS_VM_SHARED_PAGE_HOST_PA 0x5f600000
+/* 
+   In the CellulOS example, the host PA 
+   and the guest PA are the same.
+*/
 #define KVS_VM_SHARED_PAGE_HOST_PA 0x100000000
 
+
+
+// Consumer
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 int main(int argc, char **argv) {
+#pragma GCC diagnostic pop
+
     void *map_base, *virt_addr;
     int fd;
     off_t target;
 
-    if (argc < 2)
-    {
-        fprintf(
-            stderr,
-            "\nUsage:\t%s { Buffer PA }\n",
-            argv[0]);
-        exit(1);
-    }
-    target = strtoul(argv[1], 0, 0);
+    // if (argc < 2)
+    // {
+    //     fprintf(
+    //         stderr,
+    //         "\nUsage:\t%s [ Buffer PA . Optional and defaults to %p ]\n",
+    //         argv[0], (void *)KVS_VM_SHARED_PAGE_HOST_PA);
+    //     exit(1);
+    // }
+    // target = strtoul(argv[1], 0, 0);
+    target = KVS_VM_SHARED_PAGE_HOST_PA;
 
 
     
