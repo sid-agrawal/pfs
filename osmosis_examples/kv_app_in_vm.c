@@ -67,7 +67,8 @@ void *generator(void *arg) {
    In the CellulOS example, the host PA 
    and the guest PA are the same.
 */
-#define KVS_VM_SHARED_PAGE_HOST_PA 0x100000000
+// #define KVS_VM_SHARED_PAGE_HOST_PA 0x100000000
+#define KVS_VM_SHARED_PAGE_HOST_PA 0x5f600000
 
 
 
