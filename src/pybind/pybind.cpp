@@ -87,5 +87,6 @@ PYBIND11_MODULE(pypfs, m) {
     .def("get_processes", &pfs::procfs::get_processes)
     .def("get_task", &pfs::procfs::get_task, py::arg("id"))
     .def("get_cgroups", &pfs::procfs::get_cgroups)
+    .def("get_meminfo", &pfs::procfs::get_meminfo)
     ;
 }
