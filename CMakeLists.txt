@@ -119,7 +119,7 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -fPIC")
 option (pfs_BUILDROOT "Build for a builtroot environment" OFF)
 
 if (pfs_BUILDROOT)
-    set(pybind11_DIR ~/.local/lib/python3.12/site-packages/pybind11/share/cmake/pybind11)
+    set(pybind11_DIR ~/OSmosis/scripts/proc/venv/lib/python3.12/site-packages/pybind11/share/cmake/pybind11)
 else ()
     set(pybind11_DIR ${CMAKE_SOURCE_DIR}/../venv/lib/python3.12/site-packages/pybind11/share/cmake/pybind11)
 endif()
